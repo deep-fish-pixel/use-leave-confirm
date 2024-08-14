@@ -218,6 +218,8 @@ export function extendVueRouterApi(router: any) {
   router.push = extendRouterMethod("push");
   router.replace = extendRouterMethod("replace");
   router.go = extendRouterMethod("go");
+  router.back = extendRouterMethod("back");
+  router.forward = extendRouterMethod("forward");
 
   function extendRouterMethod(name: string) {
     // @ts-ignore
