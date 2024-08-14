@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import useCounterStore from '@/store/counterStore';
-import { useLeaveConfirm } from "@/utils";
+import { useLeaveConfirm } from "use-leave-confirm";
 import {useRouter} from "vue-router";
 
 const router = useRouter();

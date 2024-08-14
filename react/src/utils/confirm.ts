@@ -38,6 +38,7 @@ style.innerHTML = `
   opacity: 0.5;
   transform: translateY(-50%) scale(0.5);
   transition: all 0.3s;
+  overflow: hidden;
 }
 .lc-dialog-show .lc-dialog__container{
   transform: translateY(-50%) scale(1);

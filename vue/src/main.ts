@@ -1,3 +1,4 @@
+import "use-leave-confirm";
 import { createApp, } from 'vue';
 import { setupStore, } from '@/store';
 import { setupRouter, } from '@/router';

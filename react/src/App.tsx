@@ -40,13 +40,13 @@ const App = (props: any) => {
 	}, [language]);
 
 	return (
-		<HashRouter>
+		<BrowserRouter>
 			<ConfigProvider locale={i18nLocale} componentSize={assemblySize}>
 				<AuthRouter>
 					<Router />
 				</AuthRouter>
 			</ConfigProvider>
-		</HashRouter>
+		</BrowserRouter>
 	);
 };
 

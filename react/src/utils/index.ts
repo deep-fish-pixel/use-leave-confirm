@@ -1,4 +1,4 @@
-import { extendListeners, } from "./extendWindowListener";
+import { extendListeners, } from "extend-window-listener";
 import confirm from './confirm';
 
 interface PopState {
@@ -62,13 +62,19 @@ function removeBeforeUnload() {
 
 extendListeners("popstate");
 
-function addRouter() {
-  window.addEventListener("popstate", function (event: PopStateEvent) {
-    console.log(event.state);
-    const state = event.state || {};
 
-    return resolveConfirm(state);
-  });
+function addRouter() {
+	extendListeners("hashchange");
+	window.addEventListener("popstate", function confirmPopState(event: PopStateEvent) {
+		console.log(event.state);
+		const state = event.state || {};
+
+		return resolveConfirm(state);
+	});
+	// @ts-ignore
+	window.addEventListener("hashchange", function confirmPendingHashchange(event: PopStateEvent) {
+		return new Promise(() => {});
+	});
 }
 
 function extendReactHistoryApi() {
@@ -176,14 +182,7 @@ function resolveConfirm(state: PopState, command: boolean = false) {
           lastResolver.update(false);
         },
         cancel(){
-          /*if(state.replaced){
-              // reject(new Error('禁止离开'));
-              // // resolve(true);
-              // throw new Error('禁止离开');
-              resolve(true);
-            }
-            // 前进 后退
-            else*/ if (state.position >= 0 && config.state.position >= 0 && state.position != config.state.position && hrefDiff()) {
+          if (state.position >= 0 && config.state.position >= 0 && state.position != config.state.position && hrefDiff()) {
             window.history.go(config.state.position - state.position);
             resolve(true);
             lastResolver.update(true);
@@ -195,8 +194,9 @@ function resolveConfirm(state: PopState, command: boolean = false) {
             resolve(true);
             lastResolver.update(true);
           } else {
-            reject(new Error('没有检测到前进后退的位置'));
-            // lastResolver.update(false);
+            resolve(true);
+            lastResolver.update(true);
+            // reject(new Error('没有检测到前进后退的位置'));
           }
         },
 				contentText: config.contentText,
@@ -278,11 +278,16 @@ export function useLeaveConfirm(value?: any, option: {
 
 function polyfill() {
 	setTimeout(() => {
-		// @ts-ignore React: window.React __REACT_DEVTOOLS_GLOBAL_HOOK__ $RefreshSig$
-		const router = window.app?.__vue_app__?._context?.config?.globalProperties?.$router;
+    // @ts-ignore
+    const app = window.app;
+    const __vue_app__ = app &&app.__vue_app__;
+    const _context = __vue_app__ && __vue_app__._context;
+    const config = _context && _context.config;
+    const globalProperties = config && config.globalProperties;
+    const $router = globalProperties && globalProperties.$router;
 
-		if(router) {
-			extendVueRouterApi(router);
+		if($router) {
+			extendVueRouterApi($router);
 		} else {
 			extendReactHistoryApi();
 		}

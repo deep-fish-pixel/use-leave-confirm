@@ -1,16 +1,21 @@
 {
   "name": "use-leave-confirm",
-  "version": "1.0.0",
-  "description": "To fast start a typescript library.",
+  "version": "1.0.3",
+  "description": "Monited Data has been changed, when router changing or closing browser tab, browser will provide confirm box",
   "main": "lib/bundle.cjs.js",
   "module": "lib/bundle.esm.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "build:type": "tsc -p ./tsconfig.type.json",
-    "test": "jest --no-cache"
+    "test": "jest --no-cache",
+    "pub": "npm run build && npm run build:type && npm publish"
   },
   "author": "deep-fish-pixel",
   "license": "ISC",
+  "dependencies": {
+    "extend-window-listener": "^1.0.2"
+  },
   "devDependencies": {
     "@types/jest": "^24.0.19",
     "jest": "^24.9.0",
@@ -27,6 +32,9 @@
     "url": "git+https://github.com/deep-fish-pixel/use-leave-confirm.git"
   },
   "files": [
-    "lib","types","package.json","README.md"
+    "lib",
+    "types",
+    "package.json",
+    "README.md"
   ]
 }

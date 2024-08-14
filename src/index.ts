@@ -1,48 +1,48 @@
-import { extendListeners, } from "./extendWindowListener";
+import { extendListeners, } from "extend-window-listener";
 import confirm from './confirm';
 
 interface PopState {
-	// vue
-	position: number;
-	// react
-	idx: number;
-	replaced?: boolean;
+  // vue
+  position: number;
+  // react
+  idx: number;
+  replaced?: boolean;
 }
 
 const config = {
-	option: {
-	},
-	href: '',
-	state: Object.assign(
-		{
-			// vue
-			position: -1,
-			// react
-			idx: -1,
-			replaced: false,
-		},
-	) as PopState,
-	data: {} as any,
-	snapshot: '{}',
-	navigator: {
-		doing: false,
-		navigate: (name: string) => {},
-	},
-	contentText: '离开后，已编辑的内容将被清除',
-	confirmText: '确认离开',
-	cancelText: '取消',
+  option: {
+  },
+  href: '',
+  state: Object.assign(
+    {
+      // vue
+      position: -1,
+      // react
+      idx: -1,
+      replaced: false,
+    },
+  ) as PopState,
+  data: {} as any,
+  snapshot: '{}',
+  navigator: {
+    doing: false,
+    navigate: (name: string) => {},
+  },
+  contentText: '离开后，已编辑的内容将被清除',
+  confirmText: '确认离开',
+  cancelText: '取消',
 };
 
 const lastResolver = {
-	time: -1,
-	value: false,
-	isValid(){
-		return Date.now() - this.time < 30;
-	},
-	update(value: boolean){
-		this.value = value;
-		this.time = Date.now();
-	}
+  time: -1,
+  value: false,
+  isValid(){
+    return Date.now() - this.time < 30;
+  },
+  update(value: boolean){
+    this.value = value;
+    this.time = Date.now();
+  }
 };
 
 function handleBeforeUnload(event: BeforeUnloadEvent) {
@@ -62,12 +62,18 @@ function removeBeforeUnload() {
 
 extendListeners("popstate");
 
+
 function addRouter() {
-  window.addEventListener("popstate", function (event: PopStateEvent) {
+  extendListeners("hashchange");
+  window.addEventListener("popstate", function confirmPopState(event: PopStateEvent) {
     console.log(event.state);
     const state = event.state || {};
 
     return resolveConfirm(state);
+  });
+  // @ts-ignore
+  window.addEventListener("hashchange", function confirmPendingHashchange(event: PopStateEvent) {
+    return new Promise(() => {});
   });
 }
 
@@ -77,13 +83,13 @@ function extendReactHistoryApi() {
     const method = window.history[name];
 
     return (...params: any[]) => {
-			params[2] = params[2].replace(/^#.+#/, '#');
+      params[2] = params[2].replace(/^#.+#/, '#');
 
-			if(config.navigator.doing || !config.href){
-				return method.apply(window.history, params as any);
-			}
+      if(config.navigator.doing || !config.href){
+        return method.apply(window.history, params as any);
+      }
 
-			return resolveConfirm(params[0], true).then((result) => {
+      return resolveConfirm(params[0], true).then((result) => {
         if(!result){
           if(window.location.href !== params[2]) {
             resetInnerState();
@@ -91,12 +97,12 @@ function extendReactHistoryApi() {
             resetInnerState();
           }
 
-					config.navigator.doing = true;
-					try {
-						config.navigator.navigate(params[2]);
-					} finally {
-						config.navigator.doing = false;
-					}
+          config.navigator.doing = true;
+          try {
+            config.navigator.navigate(params[2]);
+          } finally {
+            config.navigator.doing = false;
+          }
         }
       });
     };
@@ -126,17 +132,17 @@ function resetInnerState() {
 }
 
 function getData() {
-	if(typeof config.data === 'function'){
-		return config.data();
-	} else {
-		return config.data;
-	}
+  if(typeof config.data === 'function'){
+    return config.data();
+  } else {
+    return config.data;
+  }
 }
 
 function setData(value?: any) {
   if(arguments.length){
     config.href = window.location.href;
-		config.data = value
+    config.data = value
   }
 
   config.snapshot = JSON.stringify(getData());
@@ -147,7 +153,7 @@ function hasEdited() {
 }
 
 function hrefDiff() {
-	return config.href !== window.location.href;
+  return config.href !== window.location.href;
 }
 
 function statePositionSub(state: PopState) {
@@ -160,9 +166,9 @@ function statePositionSub(state: PopState) {
 }
 
 function resolveConfirm(state: PopState, command: boolean = false) {
-	if(config.navigator.doing){
-		return Promise.resolve(false);
-	}
+  if(config.navigator.doing){
+    return Promise.resolve(false);
+  }
 
   return new Promise((resolve, reject) => {
     if(lastResolver.isValid()){
@@ -176,14 +182,7 @@ function resolveConfirm(state: PopState, command: boolean = false) {
           lastResolver.update(false);
         },
         cancel(){
-          /*if(state.replaced){
-              // reject(new Error('禁止离开'));
-              // // resolve(true);
-              // throw new Error('禁止离开');
-              resolve(true);
-            }
-            // 前进 后退
-            else*/ if (state.position >= 0 && config.state.position >= 0 && state.position != config.state.position && hrefDiff()) {
+          if (state.position >= 0 && config.state.position >= 0 && state.position != config.state.position && hrefDiff()) {
             window.history.go(config.state.position - state.position);
             resolve(true);
             lastResolver.update(true);
@@ -195,13 +194,14 @@ function resolveConfirm(state: PopState, command: boolean = false) {
             resolve(true);
             lastResolver.update(true);
           } else {
-            reject(new Error('没有检测到前进后退的位置'));
-            // lastResolver.update(false);
+            resolve(true);
+            lastResolver.update(true);
+            // reject(new Error('没有检测到前进后退的位置'));
           }
         },
-				contentText: config.contentText,
-				confirmText: config.confirmText,
-				cancelText: config.cancelText,
+        contentText: config.contentText,
+        confirmText: config.confirmText,
+        cancelText: config.cancelText,
       }).show();
     } else {
       // 返回不能清空
@@ -245,10 +245,10 @@ export function extendVueRouterApi(router: any) {
  * @example useLeaveConfirm(data) or useLeaveConfirm(() => data);
  */
 export function useLeaveConfirm(value?: any, option: {
-	navigate?: any,
-	contentText?: string,
-	confirmText?: string
-	cancelText?: string
+  navigate?: any,
+  contentText?: string,
+  confirmText?: string
+  cancelText?: string
 } = {}) {
   if(arguments.length && config.href !== window.location.href){
     Object.assign(
@@ -258,12 +258,12 @@ export function useLeaveConfirm(value?: any, option: {
     setData(value);
   }
 
-	Object.assign(config, option);
+  Object.assign(config, option);
 
-	if(option.navigate) {
-		config.navigator.navigate = option.navigate;
-		delete option.navigate;
-	}
+  if(option.navigate) {
+    config.navigator.navigate = option.navigate;
+    delete option.navigate;
+  }
 
   return {
     snapshot(value?: any){
@@ -277,7 +277,7 @@ export function useLeaveConfirm(value?: any, option: {
 }
 
 function polyfill() {
-	setTimeout(() => {
+  setTimeout(() => {
     // @ts-ignore
     const app = window.app;
     const __vue_app__ = app &&app.__vue_app__;
@@ -286,22 +286,14 @@ function polyfill() {
     const globalProperties = config && config.globalProperties;
     const $router = globalProperties && globalProperties.$router;
 
-		if($router) {
-			extendVueRouterApi($router);
-		} else {
-			extendReactHistoryApi();
-		}
-	}, 10);
+    if($router) {
+      extendVueRouterApi($router);
+    } else {
+      extendReactHistoryApi();
+    }
+  }, 10);
 }
 
 addRouter();
 addBeforeUnload();
 polyfill();
-
-
-
-
-
-
-
-

@@ -13,6 +13,8 @@ window.addEventListener = function extendAddEventListener(...params: any[]) {
   const eventName = params[0];
   const handle = params[1];
 
+	debugger
+
   if (!handle) {
     return;
   }

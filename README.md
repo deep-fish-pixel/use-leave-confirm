@@ -14,6 +14,10 @@ npm install use-leave-confirm
 
 ```ts
 // vue使用
+// 第一步 先在main.ts的首行引入
+import "use-leave-confirm";
+
+// 第二步 数据监控的页面
 import { useLeaveConfirm } from "use-leave-confirm";
 
 const { snapshot, } = useLeaveConfirm(store);
@@ -25,7 +29,7 @@ const { snapshot, } = useLeaveConfirm(store);
 // 第一步 先在main.ts的首行引入
 import "use-leave-confirm";
 
-// 第二步
+// 第二步 数据监控的页面
 import { useLeaveConfirm } from "use-leave-confirm";
 
 const navigate = useNavigate();
@@ -45,4 +49,13 @@ const { snapshot, } = useLeaveConfirm(store);
 setTimeout(() => {
   snapshot();
 }, 5000);
+```
+
+```ts
+// 子组件中获取snapshot，空参即可获取到同一个snapshot
+const { snapshot, } = useLeaveConfirm();
+
+// ...
+snapshot();
+// ...
 ```
