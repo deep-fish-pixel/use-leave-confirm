@@ -81,7 +81,7 @@ function addRouter() {
   window.addEventListener('hashchange', (event: PopStateEvent) => new Promise(() => {}));
 }
 
-function extendReactHistoryApi() {
+function extendReactHistory() {
   function extendHistoryMethod(name: string) {
     // @ts-ignore
     const method = window.history[name];
@@ -188,7 +188,6 @@ function resolveConfirm(state: PopState, command = false) {
         },
         cancel() {
           if (state.position >= 0 && config.state.position >= 0 && state.position != config.state.position && hrefDiff()) {
-            debugger;
             window.history.go(config.state.position - state.position);
             resolve(true);
             config.lastResolver.update(true);

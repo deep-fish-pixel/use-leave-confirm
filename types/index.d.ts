@@ -1,4 +1,4 @@
-export declare function extendVueRouterApi(router: any): void;
+export declare function extendVueRouter(router: any): void;
 export declare function useLeaveConfirm(value?: any, option?: {
     navigate?: any;
     contentText?: string;

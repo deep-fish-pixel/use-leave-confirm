@@ -15,19 +15,23 @@ npm install use-leave-confirm
 ```ts
 // vue使用
 // 第一步 先在main.ts的首行引入
-import "use-leave-confirm";
+import { extendVueRouter, } from "use-leave-confirm";
+
+extendVueRouter(router);
 
 // 第二步 数据监控的页面
 import { useLeaveConfirm } from "use-leave-confirm";
 
-const { snapshot, } = useLeaveConfirm(store);
+const { snapshot, } = useLeaveConfirm(store.data);
 
 ```
 
 ```ts
 // react使用
 // 第一步 先在main.ts的首行引入
-import "use-leave-confirm";
+import { extendReactHistory, } from "use-leave-confirm";
+
+extendReactHistory();
 
 // 第二步 数据监控的页面
 import { useLeaveConfirm } from "use-leave-confirm";
@@ -58,4 +62,18 @@ const { snapshot, } = useLeaveConfirm();
 // ...
 snapshot();
 // ...
+```
+
+```ts
+// vue配置文本
+import "use-leave-confirm";
+
+import { useLeaveConfirm } from "use-leave-confirm";
+
+const { snapshot, } = useLeaveConfirm(store.data, {
+  contentText: 'After leaving, the edited content will be cleared',
+  confirmText: 'Confirm',
+  cancelText: 'Cancel',
+});
+
 ```
