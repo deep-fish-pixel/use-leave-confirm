@@ -4984,10 +4984,10 @@ url-toolkit@^2.2.1:
   resolved "https://registry.npmmirror.com/url-toolkit/-/url-toolkit-2.2.5.tgz#58406b18e12c58803e14624df5e374f638b0f607"
   integrity sha512-mtN6xk+Nac+oyJ/PrI7tzfmomRVNFIWKUbG8jdYFt52hxbiReFAXIjYskvu64/dvuW71IcB7lV8l0HvZMac6Jg==
 
-use-leave-confirm@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/use-leave-confirm/-/use-leave-confirm-1.0.2.tgz#1795bf1d2658dd455341a4c5ad1390841b717f15"
-  integrity sha512-hkl82P0l92EW6BqNOSsXrcZfhcbm7O7u0UcYuItfOCWIECC7evmYCoVjDVmtgdxMOk1X3TFpIm26+XILXUN6ZQ==
+use-leave-confirm@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/use-leave-confirm/-/use-leave-confirm-1.0.7.tgz#9828b67649990866538ed1f99ab41600a88a522a"
+  integrity sha512-98WVsrOhMWDXhsBOPNDfS06YqSho6PB3+MWKfDFICWadyHBeSbqZEpRdlPo3hsU19ZCx6Rmzla7gfBxIio8SIQ==
   dependencies:
     extend-window-listener "^1.0.2"
 

@@ -12,8 +12,8 @@
 npm install use-leave-confirm
 ```
 
+### vue使用
 ```ts
-// vue使用
 // 第一步 先在main.ts的首行引入
 import { extendVueRouter, } from "use-leave-confirm";
 
@@ -26,8 +26,8 @@ const { snapshot, } = useLeaveConfirm(store.data);
 
 ```
 
+### react使用
 ```ts
-// react使用
 // 第一步 先在main.ts的首行引入
 import { extendReactHistory, } from "use-leave-confirm";
 
@@ -44,9 +44,8 @@ const { snapshot } = useLeaveConfirm(() => form.getFieldsValue(), {
 
 ```
 
-
+### 快照更新
 ```ts
-// 快照更新demo
 const { snapshot, } = useLeaveConfirm(store);
 
 // 5秒后快照更新，根据新的数据快照进行监控
@@ -55,8 +54,9 @@ setTimeout(() => {
 }, 5000);
 ```
 
+### 子组件中获取snapshot
 ```ts
-// 子组件中获取snapshot，空参即可获取到同一个snapshot
+// 空参即可获取到上一个snapshot
 const { snapshot, } = useLeaveConfirm();
 
 // ...
@@ -64,10 +64,8 @@ snapshot();
 // ...
 ```
 
+### 配置确认框的文本
 ```ts
-// vue配置文本
-import "use-leave-confirm";
-
 import { useLeaveConfirm } from "use-leave-confirm";
 
 const { snapshot, } = useLeaveConfirm(store.data, {
@@ -75,5 +73,12 @@ const { snapshot, } = useLeaveConfirm(store.data, {
   confirmText: 'Confirm',
   cancelText: 'Cancel',
 });
+
+```
+
+### 微前端处理
+```ts
+// 需要在基座中额外导入如下
+import "use-leave-confirm";
 
 ```

@@ -1,7 +1,7 @@
-import "use-leave-confirm";
+import { extendVueRouter, } from "use-leave-confirm";
 import { createApp, } from 'vue';
 import { setupStore, } from '@/store';
-import { setupRouter, } from '@/router';
+import { setupRouter, router } from '@/router';
 import { setupDirectives, } from '@/directives';
 import Lego from '@nio-fe/lego';
 import App from './App.vue';
@@ -22,6 +22,7 @@ setupStore(app);
 
 // 配置路由
 setupRouter(app);
+extendVueRouter(router);
 
 // 配置指令
 setupDirectives(app);

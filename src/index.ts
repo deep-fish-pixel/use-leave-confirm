@@ -44,6 +44,7 @@ const config = objectClass.__leave_confirm__ || {
       this.time = Date.now();
     },
   },
+  isReact: false,
 };
 
 // 解决fms通讯问题
@@ -79,43 +80,6 @@ function addRouter() {
   });
   // @ts-ignore
   window.addEventListener('hashchange', (event: PopStateEvent) => new Promise(() => {}));
-}
-
-function extendReactHistory() {
-  function extendHistoryMethod(name: string) {
-    // @ts-ignore
-    const method = window.history[name];
-
-    return (...params: any[]) => {
-      params[2] = params[2].replace(/^#.+#/, '#');
-
-      if (config.navigator.doing || !config.href) {
-        return method.apply(window.history, params as any);
-      }
-
-      return resolveConfirm(params[0], true).then((result) => {
-        if (!result) {
-          if (window.location.href !== params[2]) {
-            resetInnerState();
-          } else {
-            resetInnerState();
-          }
-
-          config.navigator.doing = true;
-          try {
-            config.navigator.navigate(params[2]);
-          } finally {
-            config.navigator.doing = false;
-          }
-        }
-      });
-    };
-  }
-
-  // @ts-ignore
-  window.history.pushState = extendHistoryMethod('pushState');
-  // @ts-ignore
-  window.history.replaceState = extendHistoryMethod('replaceState');
 }
 
 function resetInnerState() {
@@ -243,6 +207,45 @@ export function extendVueRouter(router: any) {
 
 }
 
+export function extendReactHistory() {
+  config.isReact = true;
+  // @ts-ignore
+  window.history.pushState = extendHistoryMethod('pushState');
+  // @ts-ignore
+  window.history.replaceState = extendHistoryMethod('replaceState');
+
+
+  function extendHistoryMethod(name: string) {
+    // @ts-ignore
+    const method = window.history[name];
+
+    return (...params: any[]) => {
+      params[2] = params[2].replace(/^#.+#/, '#');
+
+      if (config.navigator.doing || !config.href) {
+        return method.apply(window.history, params as any);
+      }
+
+      return resolveConfirm(params[0], true).then((result) => {
+        if (!result) {
+          if (window.location.href !== params[2]) {
+            resetInnerState();
+          } else {
+            resetInnerState();
+          }
+
+          config.navigator.doing = true;
+          try {
+            config.navigator.navigate(params[2]);
+          } finally {
+            config.navigator.doing = false;
+          }
+        }
+      });
+    };
+  }
+}
+
 /**
  * 数据改变离开确认
  * @param value 数据源
@@ -255,7 +258,7 @@ export function useLeaveConfirm(value?: any, option: {
   confirmText?: string
   cancelText?: string
 } = {}) {
-  if (value) {
+  if (value && (!config.isReact || config.isReact && config.href !== window.location.href)) {
     Object.assign(
       config.state,
       history.state
