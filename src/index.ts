@@ -1,5 +1,7 @@
-import { extendListeners, } from "extend-window-listener";
+import { extendListeners, } from 'extend-window-listener';
 import confirm from './confirm';
+
+const objectClass = Object;
 
 interface PopState {
   // vue
@@ -9,19 +11,19 @@ interface PopState {
   replaced?: boolean;
 }
 
-const config = {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const config = objectClass.__leave_confirm__ || {
   option: {
   },
   href: '',
-  state: Object.assign(
-    {
-      // vue
-      position: -1,
-      // react
-      idx: -1,
-      replaced: false,
-    },
-  ) as PopState,
+  state: ({
+    // vue
+    position: -1,
+    // react
+    idx: -1,
+    replaced: false,
+  }) as PopState,
   data: {} as any,
   snapshot: '{}',
   navigator: {
@@ -31,19 +33,23 @@ const config = {
   contentText: '离开后，已编辑的内容将被清除',
   confirmText: '确认离开',
   cancelText: '取消',
+  lastResolver: {
+    time: -1,
+    value: false,
+    isValid() {
+      return Date.now() - this.time < 30;
+    },
+    update(value: boolean) {
+      this.value = value;
+      this.time = Date.now();
+    },
+  },
 };
 
-const lastResolver = {
-  time: -1,
-  value: false,
-  isValid(){
-    return Date.now() - this.time < 30;
-  },
-  update(value: boolean){
-    this.value = value;
-    this.time = Date.now();
-  }
-};
+// 解决fms通讯问题
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+objectClass.__leave_confirm__ = config;
 
 function handleBeforeUnload(event: BeforeUnloadEvent) {
   if (hasEdited()) {
@@ -53,28 +59,26 @@ function handleBeforeUnload(event: BeforeUnloadEvent) {
 }
 
 function addBeforeUnload() {
-  window.addEventListener("beforeunload", handleBeforeUnload);
+  window.addEventListener('beforeunload', handleBeforeUnload);
 }
 
 function removeBeforeUnload() {
-  window.removeEventListener("beforeunload", handleBeforeUnload);
+  window.removeEventListener('beforeunload', handleBeforeUnload);
 }
 
-extendListeners("popstate");
+extendListeners('popstate');
 
 
 function addRouter() {
-  extendListeners("hashchange");
-  window.addEventListener("popstate", function confirmPopState(event: PopStateEvent) {
+  extendListeners('hashchange');
+  window.addEventListener('popstate', (event: PopStateEvent) => {
     console.log(event.state);
     const state = event.state || {};
 
     return resolveConfirm(state);
   });
   // @ts-ignore
-  window.addEventListener("hashchange", function confirmPendingHashchange(event: PopStateEvent) {
-    return new Promise(() => {});
-  });
+  window.addEventListener('hashchange', (event: PopStateEvent) => new Promise(() => {}));
 }
 
 function extendReactHistoryApi() {
@@ -85,13 +89,13 @@ function extendReactHistoryApi() {
     return (...params: any[]) => {
       params[2] = params[2].replace(/^#.+#/, '#');
 
-      if(config.navigator.doing || !config.href){
+      if (config.navigator.doing || !config.href) {
         return method.apply(window.history, params as any);
       }
 
       return resolveConfirm(params[0], true).then((result) => {
-        if(!result){
-          if(window.location.href !== params[2]) {
+        if (!result) {
+          if (window.location.href !== params[2]) {
             resetInnerState();
           } else {
             resetInnerState();
@@ -109,40 +113,38 @@ function extendReactHistoryApi() {
   }
 
   // @ts-ignore
-  window.history.pushState = extendHistoryMethod("pushState");
+  window.history.pushState = extendHistoryMethod('pushState');
   // @ts-ignore
-  window.history.replaceState = extendHistoryMethod("replaceState");
+  window.history.replaceState = extendHistoryMethod('replaceState');
 }
 
 function resetInnerState() {
   Object.assign(config, {
     href: '',
-    state: Object.assign(
-      {
-        // vue
-        position: -1,
-        // react
-        idx: -1
-      },
-      history.state
-    ),
+    state: {
+      // vue
+      position: -1,
+      // react
+      idx: -1,
+      ...history.state,
+    },
     data: {} as any,
     snapshot: '{}',
   });
 }
 
 function getData() {
-  if(typeof config.data === 'function'){
+  if (typeof config.data === 'function') {
     return config.data();
-  } else {
-    return config.data;
   }
+  return config.data;
+
 }
 
 function setData(value?: any) {
-  if(arguments.length){
+  if (arguments.length) {
     config.href = window.location.href;
-    config.data = value
+    config.data = value;
   }
 
   config.snapshot = JSON.stringify(getData());
@@ -157,45 +159,49 @@ function hrefDiff() {
 }
 
 function statePositionSub(state: PopState) {
-  if (state.position >= 0 && config.state.position >= 0 && state.position !== config.state.position){
+  if (state.position >= 0 && config.state.position >= 0 && state.position !== config.state.position) {
     return config.state.position - state.position;
   }
-  if(state.idx >= 0 && config.state.idx >= 0 && state.idx !== config.state.idx){
+  if (state.idx >= 0 && config.state.idx >= 0 && state.idx !== config.state.idx) {
     return config.state.idx - state.idx;
   }
 }
 
-function resolveConfirm(state: PopState, command: boolean = false) {
-  if(config.navigator.doing){
+function resolveConfirm(state: PopState, command = false) {
+  if (config.navigator.doing) {
     return Promise.resolve(false);
   }
 
   return new Promise((resolve, reject) => {
-    if(lastResolver.isValid()){
-      resolve(lastResolver.value);
-    }
-    else if(config.href && hasEdited() && (statePositionSub(state) || command)){
+    const isValid = config.lastResolver.isValid();
+
+    console.log('isValid=====', isValid);
+
+    if (isValid) {
+      resolve(config.lastResolver.value);
+    } else if (config.href && hasEdited() && (statePositionSub(state) || command)) {
       confirm({
-        confirm(){
+        confirm() {
           resetInnerState();
           resolve(false);
-          lastResolver.update(false);
+          config.lastResolver.update(false);
         },
-        cancel(){
+        cancel() {
           if (state.position >= 0 && config.state.position >= 0 && state.position != config.state.position && hrefDiff()) {
+            debugger;
             window.history.go(config.state.position - state.position);
             resolve(true);
-            lastResolver.update(true);
+            config.lastResolver.update(true);
           } else if (state.idx >= 0 && config.state.idx >= 0 && state.idx != config.state.idx && hrefDiff()) {
             window.history.go(config.state.idx - state.idx);
             resolve(true);
-            lastResolver.update(true);
-          } else if(command){
+            config.lastResolver.update(true);
+          } else if (command) {
             resolve(true);
-            lastResolver.update(true);
+            config.lastResolver.update(true);
           } else {
             resolve(true);
-            lastResolver.update(true);
+            config.lastResolver.update(true);
             // reject(new Error('没有检测到前进后退的位置'));
           }
         },
@@ -207,35 +213,33 @@ function resolveConfirm(state: PopState, command: boolean = false) {
       // 返回不能清空
       // resetInnerState();
       resolve(false);
-      lastResolver.update(false);
+      config.lastResolver.update(false);
     }
   });
 }
 
 
-export function extendVueRouterApi(router: any) {
+export function extendVueRouter(router: any) {
   console.log(router);
-  router.push = extendRouterMethod("push");
-  router.replace = extendRouterMethod("replace");
-  router.go = extendRouterMethod("go");
-  router.back = extendRouterMethod("back");
-  router.forward = extendRouterMethod("forward");
+  router.push = extendRouterMethod('push');
+  router.replace = extendRouterMethod('replace');
+  router.go = extendRouterMethod('go');
+  router.back = extendRouterMethod('back');
+  router.forward = extendRouterMethod('forward');
 
   function extendRouterMethod(name: string) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const method = router[name];
 
-    return (...params: any[]) => {
-      return resolveConfirm({
-        position: config.state.position,
-        idx: 0,
-      }, true).then((result) => {
-        if(!result){
-          return method.apply(router, params as any);
-        }
-      });
-
-    };
+    return (...params: any[]) => resolveConfirm({
+      position: config.state.position,
+      idx: 0,
+    }, true).then((result) => {
+      if (!result) {
+        return method.apply(router, params as any);
+      }
+    });
   }
 
 }
@@ -252,7 +256,7 @@ export function useLeaveConfirm(value?: any, option: {
   confirmText?: string
   cancelText?: string
 } = {}) {
-  if(arguments.length && config.href !== window.location.href){
+  if (value) {
     Object.assign(
       config.state,
       history.state
@@ -262,14 +266,14 @@ export function useLeaveConfirm(value?: any, option: {
 
   Object.assign(config, option);
 
-  if(option.navigate) {
+  if (option.navigate) {
     config.navigator.navigate = option.navigate;
     delete option.navigate;
   }
 
   return {
-    snapshot(value?: any){
-      if(arguments.length){
+    snapshot(value?: any) {
+      if (arguments.length) {
         setData(value);
       } else {
         setData();
@@ -278,24 +282,5 @@ export function useLeaveConfirm(value?: any, option: {
   };
 }
 
-function polyfill() {
-  setTimeout(() => {
-    // @ts-ignore
-    const app = window.app;
-    const __vue_app__ = app &&app.__vue_app__;
-    const _context = __vue_app__ && __vue_app__._context;
-    const config = _context && _context.config;
-    const globalProperties = config && config.globalProperties;
-    const $router = globalProperties && globalProperties.$router;
-
-    if($router) {
-      extendVueRouterApi($router);
-    } else {
-      extendReactHistoryApi();
-    }
-  }, 10);
-}
-
 addRouter();
 addBeforeUnload();
-polyfill();
