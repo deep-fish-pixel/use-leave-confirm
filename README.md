@@ -3,7 +3,7 @@
 检测页面数据的变化，在跳转、前景/返回、刷新等操作进行拦截并显示确认框，等待用户反馈
 支持vue3、react18+
 
-![效果](https://github.com/deep-fish-pixel/use-leave-confirm/blob/main/static/preview.jpeg)
+![效果](https://github.com/deep-fish-pixel/use-leave-confirm/blob/main/static/preview.png)
 ![操作效果](https://github.com/deep-fish-pixel/use-leave-confirm/blob/main/static/preview.gif)
 
 ## 使用

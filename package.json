@@ -1,6 +1,6 @@
 {
   "name": "use-leave-confirm",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "description": "Monited Data has been changed, when router changing or closing browser tab, browser will provide confirm box",
   "main": "lib/bundle.cjs.js",
   "module": "lib/bundle.esm.js",

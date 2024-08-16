@@ -54,8 +54,15 @@ style.innerHTML = `
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 22px;
-  margin-right: 12px;
+  height: 20px;
+  margin-right: 6px;
+}
+.lc-icon_warning {
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-size: 24px;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACgElEQVR4Xu2ZsW7bMBCGs4na/AjZ8ghZO/UROmdI5vgN2l0SXKBblwTeMiWbxyAPUHjIA7ToC6idGsSmGB4dJfGdBR9PRzsF9AMfIJgmeUceqSN1cDBo0CAVucJ8sFU2bsr82lbmp3+ubWlcwD/73+ehrDBf4L+4/l7kJqORq8znNWO5BCfNhZuYQ9xucq0MzyfEKCm7dMSV2bloxLfhZ2RZmRPcn6pUR70DV2UT3G9vQcg0pbnFnaUCFjz0ie0QCxrEnaQGBgzbIdIuwqaL3uEEiwo3yqWZnTr395ezN59IWRRFPsZ2sQTbWtircYNMggPPstNjUs4nr0XrAfZm2hiftw40P76R8hiiQymM/oaGYlhz4H5KymOJmoW+ow9oOwA5FLazU31iv0XdAb8WsJ0bFbJKUjkefQeMW3CyWJgqXFFCCgdYW+qy8jk7rigghQPLIr/B9hJZpbQhhQOwNrG9RLbUSZWTOMBZyLSSjDQOGIftJcIVpOzRgf89hBReYoBmLtTSlNkc20uUYhu1349IuQTeNlpkY1xRQnDg952zVx9JmRhOPgSva1LxncBKJUBaC1kVzkuslVY+pIpP8bGdnYLDA2kgkmZ25txDvToX+2dcHkv0zd2izL/iRmIAw1/08IeURxEz+q1WsyBfC+5f/eoAzMKG/7DwsR89+q0eq1y+pUIIwSz4MIJwIuVMet+X9g2lPkDf2B6Rdnkv2gLXmdgOsVaXuzoHHQ4wYFHXKFztIpzUwqZL4b5UKWNdo8rqR86hXUOwrS1Lc0mMEAKjniRktunFEcmM+BFfwBfLfRi+SSGL9Qb5Q8d1WPDoMys4CWXwKZadVQ4aNGirngDa/TtL9nHcJAAAAABJRU5ErkJggg==');
 }
 .lc-dialog__main {
   display: flex;
@@ -138,8 +145,7 @@ export default function (options: {
     <div class="lc-dialog__container">
       <div class="lc-dialog__inner">
         <div class="lc-dialog__icon-box">
-          <i class="lc-icon lc-icon_warning_filled lc-dialog__icon"
-                                           style="font-size: 22px; color: rgb(253, 167, 28);"></i>
+          <i class="lc-icon lc-icon_warning"></i>
         </div>
         <div class="lc-dialog__main">
           <div class="lc-dialog__body">${options.contentText}</div>
