@@ -56,7 +56,7 @@ setTimeout(() => {
 }, 5000);
 ```
 
-### 子组件中获取snapshot
+### 子组件中多次获取snapshot
 ```ts
 // 空参即可获取到上一个snapshot
 const { snapshot, } = useLeaveConfirm();
@@ -80,7 +80,17 @@ const { snapshot, } = useLeaveConfirm(store.data, {
 
 ### 微前端处理
 ```ts
-// 需要在基座中额外导入如下
+// vue基座项目 需要加入如下
 import "use-leave-confirm";
+
+extendVueRouter(router);
+
+```
+
+```ts
+// react基座项目 需要加入如下
+import { extendReactHistory, } from "use-leave-confirm";
+
+extendReactHistory();
 
 ```
