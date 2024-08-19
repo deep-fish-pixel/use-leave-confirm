@@ -15,6 +15,7 @@ npm install use-leave-confirm
 ### vue使用
 ```ts
 // 第一步 先在main.ts的首行引入
+import "use-leave-confirm/index.css";
 import { extendVueRouter, } from "use-leave-confirm";
 
 extendVueRouter(router);
@@ -29,6 +30,7 @@ const { snapshot, } = useLeaveConfirm(store.data);
 ### react使用
 ```ts
 // 第一步 先在main.ts的首行引入
+import "use-leave-confirm/index.css";
 import { extendReactHistory, } from "use-leave-confirm";
 
 extendReactHistory();

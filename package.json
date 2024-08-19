@@ -1,6 +1,6 @@
 {
   "name": "use-leave-confirm",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "Monited Data has been changed, when router changing or closing browser tab, browser will provide confirm box",
   "main": "lib/bundle.cjs.js",
   "module": "lib/bundle.esm.js",
@@ -20,6 +20,7 @@
     "@types/jest": "^24.0.19",
     "jest": "^24.9.0",
     "rollup": "^1.23.1",
+    "rollup-plugin-less": "^1.1.3",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript": "^1.0.1",
     "ts-jest": "^24.1.0",
@@ -35,6 +36,7 @@
     "lib",
     "types",
     "package.json",
-    "README.md"
+    "README.md",
+    "index.css"
   ]
 }
