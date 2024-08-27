@@ -1,10 +1,11 @@
-import { extendVueRouter, } from "use-leave-confirm";
 import { createApp, } from 'vue';
+import { install as leaveConfirmInstall, } from "@/utils";
 import { setupStore, } from '@/store';
 import { setupRouter, router } from '@/router';
 import { setupDirectives, } from '@/directives';
 import Lego from '@nio-fe/lego';
 import App from './App.vue';
+import 'use-leave-confirm/index.css';
 import '@/assets/styles/common.scss';
 import '@nio-fe/lego/lib/index.css';
 
@@ -22,7 +23,9 @@ setupStore(app);
 
 // 配置路由
 setupRouter(app);
-extendVueRouter(router);
+
+// 配置use-leave-confirm
+app.use(leaveConfirmInstall);
 
 // 配置指令
 setupDirectives(app);

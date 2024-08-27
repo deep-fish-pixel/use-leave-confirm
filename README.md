@@ -16,9 +16,10 @@ npm install use-leave-confirm
 ```ts
 // 第一步 先在main.ts的首行引入
 import "use-leave-confirm/index.css";
-import { extendVueRouter, } from "use-leave-confirm";
+import { install as leaveConfirmInstall, } from "use-leave-confirm";
 
-extendVueRouter(router);
+// 配置use-leave-confirm， 一定要注意setup router 后
+app.use(leaveConfirmInstall);
 
 // 第二步 数据监控的页面
 import { useLeaveConfirm } from "use-leave-confirm";

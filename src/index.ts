@@ -36,8 +36,8 @@ const config = objectClass.__leave_confirm__ || {
   lastResolver: {
     time: -1,
     value: false,
-    isValid() {
-      return Date.now() - this.time < 30;
+    isValid(timer = 30) {
+      return Date.now() - this.time < timer;
     },
     update(value: boolean) {
       this.value = value;
@@ -73,8 +73,11 @@ extendListeners('popstate');
 function addRouter() {
   extendListeners('hashchange');
   window.addEventListener('popstate', (event: PopStateEvent) => {
-    console.log(event.state);
     const state = event.state || {};
+
+    if(event.singleSpaTrigger && config.lastResolver.isValid(500)){
+      return Promise.resolve(false);
+    }
 
     return resolveConfirm(state);
   });
@@ -137,11 +140,9 @@ function resolveConfirm(state: PopState, command = false) {
   }
 
   return new Promise((resolve, reject) => {
-    const isValid = config.lastResolver.isValid();
+    const valid = config.lastResolver.isValid();
 
-    console.log('isValid=====', isValid);
-
-    if (isValid) {
+    if (valid) {
       resolve(config.lastResolver.value);
     } else if (config.href && hasEdited() && (statePositionSub(state) || command)) {
       confirm({
@@ -181,9 +182,7 @@ function resolveConfirm(state: PopState, command = false) {
   });
 }
 
-
 export function extendVueRouter(router: any) {
-  console.log(router);
   router.push = extendRouterMethod('push');
   router.replace = extendRouterMethod('replace');
   router.go = extendRouterMethod('go');
@@ -200,12 +199,24 @@ export function extendVueRouter(router: any) {
       idx: 0,
     }, true).then((result) => {
       if (!result) {
+        if(name === 'push' || name === 'replace'){
+          config.lastResolver.update(false);
+        }
         return method.apply(router, params as any);
       }
     });
   }
-
 }
+
+export const install = {
+  install: (app: any) => {
+    if(!app.config.globalProperties.$router){
+      console.error('use-leave-confirm should install after vue-router! Otherwise, it may cause partial failure.');
+      return;
+    }
+    extendVueRouter(app.config.globalProperties.$router);
+  }
+};
 
 export function extendReactHistory() {
   config.isReact = true;
