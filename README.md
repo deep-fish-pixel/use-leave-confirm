@@ -82,9 +82,10 @@ const { snapshot, } = useLeaveConfirm(store.data, {
 ### 微前端处理
 ```ts
 // vue基座项目 需要加入如下
-import { extendVueRouter, } from "use-leave-confirm";
+import { install as leaveConfirmInstall, } from "use-leave-confirm";
 
-extendVueRouter(router);
+// 配置use-leave-confirm， 一定要注意setup router 后
+app.use(leaveConfirmInstall);
 
 ```
 
