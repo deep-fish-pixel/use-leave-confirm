@@ -175,7 +175,7 @@ function resolveConfirm(state: PopState, command = false) {
       }).show();
     } else {
       // 返回不能清空
-      // resetInnerState();
+      resetInnerState();
       resolve(false);
       config.lastResolver.update(false);
     }
