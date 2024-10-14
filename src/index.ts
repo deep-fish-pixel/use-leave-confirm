@@ -231,7 +231,7 @@ export function extendReactHistory() {
     const method = window.history[name];
 
     return (...params: any[]) => {
-      params[2] = params[2].replace(/^#.+#/, '#');
+      params[1] = params[1].replace(/^#.+#/, '#');
 
       if (config.navigator.doing || !config.href) {
         return method.apply(window.history, params as any);
@@ -239,7 +239,7 @@ export function extendReactHistory() {
 
       return resolveConfirm(params[0], true).then((result) => {
         if (!result) {
-          if (window.location.href !== params[2]) {
+          if (window.location.href !== params[1]) {
             resetInnerState();
           } else {
             resetInnerState();
@@ -247,7 +247,7 @@ export function extendReactHistory() {
 
           config.navigator.doing = true;
           try {
-            config.navigator.navigate(params[2]);
+            config.navigator.navigate(params[1]);
           } finally {
             config.navigator.doing = false;
           }
