@@ -239,7 +239,7 @@ export function extendReactHistory() {
 
       return resolveConfirm(params[0], true).then((result) => {
         if (!result) {
-          if (window.location.href !== params[1]) {
+          if (window.location.href !== params[2]) {
             resetInnerState();
           } else {
             resetInnerState();
@@ -247,7 +247,7 @@ export function extendReactHistory() {
 
           config.navigator.doing = true;
           try {
-            config.navigator.navigate(params[1]);
+            config.navigator.navigate(params[2]);
           } finally {
             config.navigator.doing = false;
           }

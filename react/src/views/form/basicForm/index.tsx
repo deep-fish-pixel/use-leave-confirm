@@ -2,7 +2,7 @@ import { Button, Form, Input, Select, Space, message } from "antd";
 import "./index.less";
 // import {useNavigate} from "react-router-dom";
 // import {useEffect} from "react";
-import {useLeaveConfirm} from "use-leave-confirm";
+import {useLeaveConfirm}  from "../../../../../src";
 // import {useLeaveConfirm} from "@/utils";
 import {useNavigate} from "react-router-dom";
 
